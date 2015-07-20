@@ -1,0 +1,20 @@
+{
+  "name": "pixi-packer-parser",
+  "version": "0.0.0",
+  "description": "A parsing middleware for https://github.com/englercj/resource-loader (used by PIXI.js) and https://github.com/gamevy/pixi-packer",
+  "scripts": {},
+  "main": "index.js",
+  "repository": "gamevy/pixi-packer-parser",
+  "author": "Gamevy",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^0.20.0",
+    "mocha": "~2.2.1",
+    "sinon": "~1.14.1",
+    "sinon-chai": "~2.7.0"
+  },
+  "dependencies": {
+    "pixi.js": "^3.0.7",
+    "resource-loader": "^1.6.1"
+  }
+}
