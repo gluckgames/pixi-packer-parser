@@ -56,10 +56,10 @@ module.exports = function (PIXI)
                 res.textures = {};
                 spritesheet.sprites.forEach(function(sprite) {
                     var frame = new PIXI.Rectangle(
-                        sprite.position.x,
-                        sprite.position.y,
-                        sprite.dimension.w,
-                        sprite.dimension.h
+                        sprite.position.x / resolution,
+                        sprite.position.y / resolution,
+                        sprite.dimension.w / resolution,
+                        sprite.dimension.h / resolution
                     );
                     var crop = frame.clone();
                     var trim = null;
@@ -69,20 +69,13 @@ module.exports = function (PIXI)
                         trim = new PIXI.Rectangle(
                             sprite.trim.x / resolution,
                             sprite.trim.y / resolution,
-                            frame.width / resolution,
-                            frame.height / resolution
+                            frame.width,
+                            frame.height
                         );
 
                         crop.width = sprite.trim.w / resolution;
                         crop.height = sprite.trim.h / resolution;
-                        crop.x /= resolution;
-                        crop.y /= resolution;
                     }
-
-                    frame.x /= resolution;
-                    frame.y /= resolution;
-                    frame.width /= resolution;
-                    frame.height /= resolution;
 
                     res.textures[sprite.name] = new PIXI.Texture(res.texture.baseTexture, frame, crop, trim, false);
 
