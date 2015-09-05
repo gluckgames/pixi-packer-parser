@@ -55,24 +55,26 @@ module.exports = function (PIXI)
                 res.texture.baseTexture.update();
                 res.textures = {};
                 spritesheet.sprites.forEach(function(sprite) {
-                    var frame = null;
-                    var crop = null;
+                    var frame = new PIXI.Rectangle(
+                        sprite.position.x,
+                        sprite.position.y,
+                        sprite.dimension.w,
+                        sprite.dimension.h
+                    );
+                    var crop = frame.clone();
                     var trim = null;
 
-                    frame = new PIXI.Rectangle(sprite.frame.x, sprite.frame.y, sprite.frame.w, sprite.frame.h);
-                    crop = frame.clone();
-
                     //  Check to see if the sprite is trimmed
-                    if (sprite.trimmed) {
+                    if (sprite.trim) {
                         trim = new PIXI.Rectangle(
-                            sprite.spriteSourceSize.x / resolution,
-                            sprite.spriteSourceSize.y / resolution,
+                            sprite.trim.x / resolution,
+                            sprite.trim.y / resolution,
                             frame.width / resolution,
                             frame.height / resolution
                         );
 
-                        crop.width = sprite.spriteSourceSize.w / resolution;
-                        crop.height = sprite.spriteSourceSize.h / resolution;
+                        crop.width = sprite.trim.w / resolution;
+                        crop.height = sprite.trim.h / resolution;
                         crop.x /= resolution;
                         crop.y /= resolution;
                     }
@@ -82,7 +84,7 @@ module.exports = function (PIXI)
                     frame.width /= resolution;
                     frame.height /= resolution;
 
-                    res.textures[sprite.name] = new PIXI.Texture(res.texture.baseTexture, frame, crop, trim, sprite.rotated);
+                    res.textures[sprite.name] = new PIXI.Texture(res.texture.baseTexture, frame, crop, trim, false);
 
                     // lets also add the frame to pixi's global cache for fromFrame and fromImage functions
                     PIXI.utils.TextureCache[sprite.name] = res.textures[sprite.name];
