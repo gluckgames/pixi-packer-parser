@@ -24,7 +24,7 @@ module.exports = function (PIXI)
 {
     return function (resource, next)
     {
-        // skip if no data, its not json, or it isn't pixi-packer manifest
+        // skip if no data, its not json, or it isn't a pixi-packer manifest
         if (!resource.data || !resource.isJson || !resource.data.meta || resource.data.meta.type !== "pixi-packer") {
             return next();
         }
@@ -32,8 +32,6 @@ module.exports = function (PIXI)
         if (resource.data.meta.version > 1) {
             throw new Error("pixi-packer manifest version " + resource.data.meta.version + " not supported");
         }
-
-        console.log(this);
 
         var loader = this;
 
@@ -55,51 +53,39 @@ module.exports = function (PIXI)
             loader.add(name, imageUrl, loadOptions, function (res) {
                 res.texture.baseTexture.resolution = resolution;
                 res.texture.baseTexture.update();
-                console.log(res.texture.baseTexture);
                 res.textures = {};
                 spritesheet.sprites.forEach(function(sprite) {
-                    var size = null;
+                    var frame = null;
+                    var crop = null;
                     var trim = null;
-                    var rect = sprite.frame;
 
-                    if (sprite.rotated) {
-                        size = new PIXI.Rectangle(rect.x, rect.y, rect.h, rect.w);
-                    }
-                    else {
-                        size = new PIXI.Rectangle(rect.x, rect.y, rect.w, rect.h);
-                    }
+                    frame = new PIXI.Rectangle(sprite.frame.x, sprite.frame.y, sprite.frame.w, sprite.frame.h);
+                    crop = frame.clone();
 
                     //  Check to see if the sprite is trimmed
-                    if (sprite.trimmed)
-                    {
+                    if (sprite.trimmed) {
                         trim = new PIXI.Rectangle(
                             sprite.spriteSourceSize.x / resolution,
                             sprite.spriteSourceSize.y / resolution,
-                            sprite.sourceSize.w / resolution,
-                            sprite.sourceSize.h / resolution
-                         );
+                            frame.width / resolution,
+                            frame.height / resolution
+                        );
+
+                        crop.width = sprite.spriteSourceSize.w / resolution;
+                        crop.height = sprite.spriteSourceSize.h / resolution;
+                        crop.x /= resolution;
+                        crop.y /= resolution;
                     }
 
-                    // flip the width and height!
-                    if (sprite.rotated)
-                    {
-                        var temp = size.width;
-                        size.width = size.height;
-                        size.height = temp;
-                    }
+                    frame.x /= resolution;
+                    frame.y /= resolution;
+                    frame.width /= resolution;
+                    frame.height /= resolution;
 
-                    size.x /= resolution;
-                    size.y /= resolution;
-                    size.width /= resolution;
-                    size.height /= resolution;
-
-                    res.textures[sprite.name] = new PIXI.Texture(res.texture.baseTexture, size, size.clone(), trim, sprite.rotated);
+                    res.textures[sprite.name] = new PIXI.Texture(res.texture.baseTexture, frame, crop, trim, sprite.rotated);
 
                     // lets also add the frame to pixi's global cache for fromFrame and fromImage functions
                     PIXI.utils.TextureCache[sprite.name] = res.textures[sprite.name];
-                    if (sprite.name === "start_vt") {
-                        console.log(PIXI.utils.TextureCache[sprite.name]);
-                    }
                 });
                 waiter.done();
             });
