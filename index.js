@@ -45,6 +45,11 @@ module.exports = function (PIXI)
 
         var resolution = resource.data.resolution;
 
+        if (resource.data.spritesheets.length && loader.progress === 100) {
+            // This is a temporary workaround until a solution for https://github.com/englercj/resource-loader/pull/32 is found
+            loader.progress = 0;
+        }
+
         // Load all spritesheets
         var waiter = new WaitForAll(resource.data.spritesheets.length, next);
         resource.data.spritesheets.forEach(function(spritesheet) {
