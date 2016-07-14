@@ -66,20 +66,44 @@ module.exports = function (PIXI)
                         sprite.dimension.w / resolution,
                         sprite.dimension.h / resolution
                     );
-                    var crop = frame.clone();
+
+                    var crop;
+                    if (Number(PIXI.VERSION.charAt(0)) >= 4) {
+                        crop = new PIXI.Rectangle(
+                            0,
+                            0,
+                            sprite.dimension.w / resolution,
+                            sprite.dimension.h / resolution
+                        );
+                    } else {
+                        crop = frame.clone();
+                    }
+
                     var trim = null;
 
                     //  Check to see if the sprite is trimmed
                     if (sprite.trim) {
-                        trim = new PIXI.Rectangle(
-                            sprite.trim.x / resolution,
-                            sprite.trim.y / resolution,
-                            frame.width,
-                            frame.height
-                        );
+                        if (Number(PIXI.VERSION.charAt(0)) >= 4) {
+                            trim = new PIXI.Rectangle(
+                                sprite.trim.x / resolution,
+                                sprite.trim.y / resolution,
+                                sprite.trim.w / resolution,
+                                sprite.trim.h / resolution
+                            );
 
-                        crop.width = sprite.trim.w / resolution;
-                        crop.height = sprite.trim.h / resolution;
+                            frame.width = sprite.trim.w / resolution;
+                            frame.height = sprite.trim.h / resolution;
+                        } else {
+                            trim = new PIXI.Rectangle(
+                                sprite.trim.x / resolution,
+                                sprite.trim.y / resolution,
+                                frame.width,
+                                frame.height
+                            );
+
+                            crop.width = sprite.trim.w / resolution;
+                            crop.height = sprite.trim.h / resolution;
+                        }
                     }
 
                     res.textures[sprite.name] = new PIXI.Texture(res.texture.baseTexture, frame, crop, trim, false);
