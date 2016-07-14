@@ -66,7 +66,12 @@ module.exports = function (PIXI)
                         sprite.dimension.w / resolution,
                         sprite.dimension.h / resolution
                     );
-                    var crop = frame.clone();
+                    var crop = new PIXI.Rectangle(
+                      0,
+                      0,
+                      sprite.dimension.w / resolution,
+                      sprite.dimension.h / resolution
+                    );
                     var trim = null;
 
                     //  Check to see if the sprite is trimmed
@@ -74,12 +79,12 @@ module.exports = function (PIXI)
                         trim = new PIXI.Rectangle(
                             sprite.trim.x / resolution,
                             sprite.trim.y / resolution,
-                            frame.width,
-                            frame.height
+                            sprite.trim.w / resolution,
+                            sprite.trim.h / resolution
                         );
 
-                        crop.width = sprite.trim.w / resolution;
-                        crop.height = sprite.trim.h / resolution;
+                        frame.width = sprite.trim.w / resolution;
+                        frame.height = sprite.trim.h / resolution;
                     }
 
                     res.textures[sprite.name] = new PIXI.Texture(res.texture.baseTexture, frame, crop, trim, false);
