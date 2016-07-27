@@ -14,6 +14,6 @@
     "sinon-chai": "~2.7.0"
   },
   "dependencies": {
-    "resource-loader": "^1.6.1"
+    "resource-loader": "1.6.6"
   }
 }
