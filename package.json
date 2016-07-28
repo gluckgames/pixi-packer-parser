@@ -1,6 +1,6 @@
 {
   "name": "pixi-packer-parser",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "A parsing middleware for https://github.com/englercj/resource-loader (used by PIXI.js) and https://github.com/gamevy/pixi-packer",
   "scripts": {},
   "main": "index.js",
