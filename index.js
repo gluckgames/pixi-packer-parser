@@ -25,7 +25,7 @@ module.exports = function (PIXI)
     return function (resource, next)
     {
         // skip if no data, its not json, or it isn't a pixi-packer manifest
-        if (!resource.data || !resource.isJson || !resource.data.meta || resource.data.meta.type !== "pixi-packer") {
+        if (!resource.data || resource.type !== Resource.TYPE.JSON || !resource.data.meta || resource.data.meta.type !== "pixi-packer") {
             return next();
         }
 
@@ -37,7 +37,8 @@ module.exports = function (PIXI)
 
         var loadOptions = {
             crossOrigin: resource.crossOrigin,
-            loadType: Resource.LOAD_TYPE.IMAGE
+            loadType: Resource.LOAD_TYPE.IMAGE,
+            parentResource: resource
         };
 
         var urlForManifest = resource.url.replace(loader.baseUrl, "");
