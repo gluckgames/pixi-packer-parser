@@ -56,10 +56,12 @@ module.exports = function (PIXI)
         resource.data.spritesheets.forEach(function(spritesheet) {
             var name = spritesheet.image;
             var imageUrl = route + "/" + spritesheet.image;
-            PIXI.Texture.removeFromCache(name);
-            PIXI.Texture.removeFromCache(imageUrl);
-            PIXI.BaseTexture.removeFromCache(name);
-            PIXI.BaseTexture.removeFromCache(imageUrl);
+            if( PIXI.Texture.removeFromCache) {
+                PIXI.Texture.removeFromCache(name);
+                PIXI.Texture.removeFromCache(imageUrl);
+                PIXI.BaseTexture.removeFromCache(name);
+                PIXI.BaseTexture.removeFromCache(imageUrl);
+            }
             loader.add(name, imageUrl, loadOptions, function (res) {
                 res.texture.baseTexture.resolution = resolution;
                 res.texture.baseTexture.update();
