@@ -56,7 +56,7 @@ module.exports = function (PIXI)
         resource.data.spritesheets.forEach(function(spritesheet) {
             var name = spritesheet.image;
             var imageUrl = route + "/" + spritesheet.image;
-            if( PIXI.Texture.removeFromCache) {
+            if (PIXI.Texture.removeFromCache) {
                 PIXI.Texture.removeFromCache(name);
                 PIXI.Texture.removeFromCache(imageUrl);
                 PIXI.BaseTexture.removeFromCache(name);
