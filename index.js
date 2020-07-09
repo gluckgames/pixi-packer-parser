@@ -22,6 +22,11 @@ function WaitForAll(count, allDone) {
 
 module.exports = function (PIXI)
 {
+    var PIXI_VERSION = Number(PIXI.VERSION.charAt(0));
+    if(PIXI_VERSION < 4) {
+        throw new Error("PIXI version needs to be >= v4.0.0");
+    }
+
     return function (resource, next)
     {
         // skip if no data, its not json, or it isn't a pixi-packer manifest
@@ -45,7 +50,7 @@ module.exports = function (PIXI)
         var route = pathWithoutFile(urlForManifest);
 
         var resolution = resource.data.resolution;
-        var versionResolutionFactor = Number(PIXI.VERSION.charAt(0)) >= 5 ? 1 : resolution;
+        var versionResolutionFactor = PIXI_VERSION >= 5 ? 1 : resolution;
 
         if (resource.data.spritesheets.length && loader.progress === 100) {
             // This is a temporary workaround until a solution for https://github.com/englercj/resource-loader/pull/32 is found
@@ -75,43 +80,26 @@ module.exports = function (PIXI)
                         sprite.dimension.h / versionResolutionFactor
                     );
 
-                    var crop;
-                    if (Number(PIXI.VERSION.charAt(0)) >= 4) {
-                        crop = new PIXI.Rectangle(
-                            0,
-                            0,
-                            sprite.dimension.w / resolution,
-                            sprite.dimension.h / resolution
-                        );
-                    } else {
-                        crop = frame.clone();
-                    }
+                    var crop = new PIXI.Rectangle(
+                        0,
+                        0,
+                        sprite.dimension.w / resolution,
+                        sprite.dimension.h / resolution
+                    );
 
                     var trim = crop;
 
                     //  Check to see if the sprite is trimmed
                     if (sprite.trim) {
-                        if (Number(PIXI.VERSION.charAt(0)) >= 4) {
-                            trim = new PIXI.Rectangle(
-                                sprite.trim.x / resolution,
-                                sprite.trim.y / resolution,
-                                sprite.trim.w / resolution,
-                                sprite.trim.h / resolution
-                            );
+                        trim = new PIXI.Rectangle(
+                            sprite.trim.x / resolution,
+                            sprite.trim.y / resolution,
+                            sprite.trim.w / resolution,
+                            sprite.trim.h / resolution
+                        );
 
-                            frame.width = sprite.trim.w / versionResolutionFactor;
-                            frame.height = sprite.trim.h / versionResolutionFactor;
-                        } else {
-                            trim = new PIXI.Rectangle(
-                                sprite.trim.x / resolution,
-                                sprite.trim.y / resolution,
-                                frame.width,
-                                frame.height
-                            );
-
-                            crop.width = sprite.trim.w / resolution;
-                            crop.height = sprite.trim.h / resolution;
-                        }
+                        frame.width = sprite.trim.w / versionResolutionFactor;
+                        frame.height = sprite.trim.h / versionResolutionFactor;
                     }
 
                     res.textures[sprite.name] = new PIXI.Texture(res.texture.baseTexture, frame, crop, trim, 0);
