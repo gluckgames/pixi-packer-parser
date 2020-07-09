@@ -45,6 +45,7 @@ module.exports = function (PIXI)
         var route = pathWithoutFile(urlForManifest);
 
         var resolution = resource.data.resolution;
+        var versionResolutionFactor = Number(PIXI.VERSION.charAt(0)) >= 5 ? 1 : resolution;
 
         if (resource.data.spritesheets.length && loader.progress === 100) {
             // This is a temporary workaround until a solution for https://github.com/englercj/resource-loader/pull/32 is found
@@ -68,10 +69,10 @@ module.exports = function (PIXI)
                 res.textures = {};
                 spritesheet.sprites.forEach(function(sprite) {
                     var frame = new PIXI.Rectangle(
-                        sprite.position.x / resolution,
-                        sprite.position.y / resolution,
-                        sprite.dimension.w / resolution,
-                        sprite.dimension.h / resolution
+                        sprite.position.x / versionResolutionFactor,
+                        sprite.position.y / versionResolutionFactor,
+                        sprite.dimension.w / versionResolutionFactor,
+                        sprite.dimension.h / versionResolutionFactor
                     );
 
                     var crop;
@@ -86,7 +87,7 @@ module.exports = function (PIXI)
                         crop = frame.clone();
                     }
 
-                    var trim = null;
+                    var trim = crop;
 
                     //  Check to see if the sprite is trimmed
                     if (sprite.trim) {
@@ -98,8 +99,8 @@ module.exports = function (PIXI)
                                 sprite.trim.h / resolution
                             );
 
-                            frame.width = sprite.trim.w / resolution;
-                            frame.height = sprite.trim.h / resolution;
+                            frame.width = sprite.trim.w / versionResolutionFactor;
+                            frame.height = sprite.trim.h / versionResolutionFactor;
                         } else {
                             trim = new PIXI.Rectangle(
                                 sprite.trim.x / resolution,
@@ -113,7 +114,7 @@ module.exports = function (PIXI)
                         }
                     }
 
-                    res.textures[sprite.name] = new PIXI.Texture(res.texture.baseTexture, frame, crop, trim, false);
+                    res.textures[sprite.name] = new PIXI.Texture(res.texture.baseTexture, frame, crop, trim, 0);
 
                     // lets also add the frame to pixi's global cache for fromFrame and fromImage functions
                     PIXI.utils.TextureCache[sprite.name] = res.textures[sprite.name];
